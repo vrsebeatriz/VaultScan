@@ -97,15 +97,36 @@
 
 ## Traceability
 
-| REQ-ID | Phase |
-|--------|-------|
-| DET-01, DET-02, DET-03, DET-04 | TBD |
-| SEV-01, SEV-02 | TBD |
-| FLT-01, FLT-02, FLT-03, FLT-04 | TBD |
-| IAC-01, IAC-02, IAC-03 | TBD |
-| GIT-01, GIT-02, GIT-03 | TBD |
-| CFG-01, CFG-02 | TBD |
-| API-01, API-02, API-03 | TBD |
-| EXP-01, EXP-02 | TBD |
-| UI-01, UI-02, UI-03, UI-04, UI-05 | TBD |
-| CLI-01, CLI-02, CLI-03 | TBD |
+| REQ-ID | Phase | Status |
+|--------|-------|--------|
+| CFG-01 | Phase 1: Foundation | Pending |
+| CFG-02 | Phase 1: Foundation | Pending |
+| FLT-01 | Phase 1: Foundation | Pending |
+| FLT-02 | Phase 1: Foundation | Pending |
+| FLT-03 | Phase 1: Foundation | Pending |
+| FLT-04 | Phase 1: Foundation | Pending |
+| SEV-01 | Phase 1: Foundation | Pending |
+| SEV-02 | Phase 1: Foundation | Pending |
+| DET-01 | Phase 2: Secrets Scanner | Pending |
+| DET-02 | Phase 2: Secrets Scanner | Pending |
+| DET-03 | Phase 2: Secrets Scanner | Pending |
+| DET-04 | Phase 2: Secrets Scanner | Pending |
+| GIT-01 | Phase 3: Git History Scanner | Pending |
+| GIT-02 | Phase 3: Git History Scanner | Pending |
+| GIT-03 | Phase 3: Git History Scanner | Pending |
+| IAC-01 | Phase 4: IaC Scanner | Pending |
+| IAC-02 | Phase 4: IaC Scanner | Pending |
+| IAC-03 | Phase 4: IaC Scanner | Pending |
+| API-01 | Phase 5: API + Orchestrator | Pending |
+| API-02 | Phase 5: API + Orchestrator | Pending |
+| API-03 | Phase 5: API + Orchestrator | Pending |
+| UI-01 | Phase 6: Web Dashboard | Pending |
+| UI-02 | Phase 6: Web Dashboard | Pending |
+| UI-03 | Phase 6: Web Dashboard | Pending |
+| UI-04 | Phase 6: Web Dashboard | Pending |
+| UI-05 | Phase 6: Web Dashboard | Pending |
+| EXP-01 | Phase 7: Export + CLI | Pending |
+| EXP-02 | Phase 7: Export + CLI | Pending |
+| CLI-01 | Phase 7: Export + CLI | Pending |
+| CLI-02 | Phase 7: Export + CLI | Pending |
+| CLI-03 | Phase 7: Export + CLI | Pending |
