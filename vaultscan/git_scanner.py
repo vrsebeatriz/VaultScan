@@ -76,11 +76,8 @@ class GitHistoryScanner:
                     logger.debug(f"Error reading blob for {file_path} in {commit_sha}: {e}")
 
     def _process_blob_text(self, text: str, file_path: str, commit_sha: str, commit_date: str, commit_msg: str):
-        lines = text.split('\n')
-        raw_findings = scan_lines(lines, file_path, source="git_history")
-        
-        for raw in raw_findings:
-            raw["commit_sha"] = commit_sha
-            raw["commit_date"] = commit_date
-            raw["commit_message"] = commit_msg
-            self.orchestrator.add_raw_finding(raw)
+        # Always True for is_tracked since it's in git history
+        self.orchestrator.scan_content(
+            text, file_path, "git_history", is_tracked=True,
+            commit_sha=commit_sha, commit_date=commit_date, commit_message=commit_msg
+        )
