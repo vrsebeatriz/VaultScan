@@ -16,6 +16,8 @@ class GitHistoryScanner:
             repo = git.Repo(self.repo_path)
         except git.exc.InvalidGitRepositoryError:
             logger.warning(f"Path '{self.repo_path}' is not a valid git repository. Skipping git history scan.")
+            if self.orchestrator.progress_callback:
+                self.orchestrator.progress_callback(100)
             return
 
         try:
@@ -30,10 +32,15 @@ class GitHistoryScanner:
                 commits_to_scan = commits_to_scan[:self.orchestrator.config.max_commits]
         except git.exc.GitCommandError as e:
             logger.error(f"Error fetching git history: {e}")
+            if self.orchestrator.progress_callback:
+                self.orchestrator.progress_callback(100)
             return
             
-        for commit in commits_to_scan:
+        total = len(commits_to_scan)
+        for i, commit in enumerate(commits_to_scan):
             self._scan_commit(repo, commit)
+            if self.orchestrator.progress_callback and total > 0:
+                self.orchestrator.progress_callback(50 + int((i + 1) / total * 50))
             
     def _scan_commit(self, repo: git.Repo, commit: git.Commit):
         commit_date = commit.committed_datetime.isoformat()

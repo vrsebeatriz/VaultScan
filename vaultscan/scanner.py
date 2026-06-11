@@ -10,9 +10,10 @@ from .detectors.iac import scan_dockerfile, scan_github_actions, scan_dotenv
 from .severity import compute_severity
 
 class ScanOrchestrator:
-    def __init__(self, config: ScanConfig, repo_path: str = None):
+    def __init__(self, config: ScanConfig, repo_path: str = None, progress_callback = None):
         self.config = config
         self.repo_path = repo_path
+        self.progress_callback = progress_callback
         self.filter_chain = FilterChain(
             exclude_paths=config.exclude_paths,
             exclude_exts=config.exclude_extensions
@@ -122,10 +123,18 @@ class ScanOrchestrator:
         self.scan_content(content, file_path, "working_tree", is_tracked)
 
     def scan_directory(self, target_dir: str) -> List[Finding]:
+        files_to_scan = []
         for root, dirs, files in os.walk(target_dir):
             for file in files:
                 file_path = os.path.join(root, file)
-                self.scan_file(file_path)
+                if self.filter_chain.should_scan_file(file_path):
+                    files_to_scan.append(file_path)
+                    
+        total = len(files_to_scan)
+        for i, file_path in enumerate(files_to_scan):
+            self.scan_file(file_path)
+            if self.progress_callback and total > 0:
+                self.progress_callback(int((i + 1) / total * 50))
 
         final_findings = list(self.findings_map.values())
         for finding in final_findings:
