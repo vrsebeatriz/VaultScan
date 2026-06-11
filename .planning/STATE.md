@@ -16,16 +16,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-06-11)
 
 **Core value:** Identify secrets and misconfigurations before they reach production, with auditable evidence exportable as HTML/JSON — 100% local, no data leaves the machine
-**Current focus:** Phase 1 — Foundation
+**Current focus:** Phase 3 — Git History Scanner
 
 ## Current Position
 
-Phase: 1 of 7 (Foundation)
+Phase: 3 of 7 (Git History Scanner)
 Plan: 0 of TBD in current phase
-Status: Ready to plan
-Last activity: 2026-06-11 — Roadmap created; 31 requirements mapped across 7 phases
+Status: Ready to plan Phase 3
+Last activity: 2026-06-11 — Phase 2 completed (Secrets scanner, Regex, Entropy, Deduplication)
 
-Progress: [░░░░░░░░░░] 0%
+Progress: [██░░░░░░░░] 28%
 
 ## Performance Metrics
 
