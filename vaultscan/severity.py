@@ -3,7 +3,7 @@ from .models import Severity, Finding, Occurrence
 def compute_occurrence_severity(occurrence: Occurrence, base_severity: Severity) -> Severity:
     path = occurrence.file_path.replace('\\', '/').lower()
     
-    demote_keywords = ["test/", "docs/", ".spec.", "fixture", "mock", "readme"]
+    demote_keywords = ["test", "docs", ".spec.", "fixture", "mock", "readme"]
     
     is_demoted = False
     for kw in demote_keywords:
