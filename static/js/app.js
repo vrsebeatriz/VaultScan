@@ -12,6 +12,13 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('btnNext').addEventListener('click', () => { 
         if(currentPage * ITEMS_PER_PAGE < filteredFindings.length) { currentPage++; renderFindingsList(); } 
     });
+    
+    document.getElementById('btnExportJson').addEventListener('click', () => {
+        if (currentScanId) window.open(`/api/export?scan_id=${currentScanId}&format=json`, '_blank');
+    });
+    document.getElementById('btnExportHtml').addEventListener('click', () => {
+        if (currentScanId) window.open(`/api/export?scan_id=${currentScanId}&format=html`, '_blank');
+    });
 });
 
 async function startScan() {
@@ -105,6 +112,7 @@ async function fetchReport() {
         
         // Populate UI
         document.getElementById('dashboardContent').classList.remove('hidden');
+        document.getElementById('exportControls').classList.remove('hidden');
         resetScanBtn();
         
         updateCards();

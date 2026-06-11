@@ -101,3 +101,68 @@ async def get_report(scan_id: str):
         raise HTTPException(status_code=400, detail="Scan is not complete yet.")
         
     return {"findings": scan_data["findings"]}
+
+@app.get("/api/export")
+async def export_report(scan_id: str, format: str = "json"):
+    if scan_id not in SCANS:
+        raise HTTPException(status_code=404, detail="Scan not found.")
+        
+    scan_data = SCANS[scan_id]
+    if scan_data["status"] != "complete":
+        raise HTTPException(status_code=400, detail="Scan is not complete yet.")
+        
+    findings = scan_data["findings"]
+    
+    if format == "json":
+        from fastapi.responses import JSONResponse
+        return JSONResponse(
+            content={"findings": findings},
+            headers={"Content-Disposition": "attachment; filename=vaultscan_report.json"}
+        )
+    elif format == "html":
+        from fastapi.responses import HTMLResponse
+        html_content = f"""<!DOCTYPE html>
+<html>
+<head>
+    <title>VaultScan Report</title>
+    <style>
+        body {{ font-family: sans-serif; padding: 20px; }}
+        .warning {{ background-color: #ffebee; color: #c62828; padding: 15px; border-left: 5px solid #c62828; font-weight: bold; margin-bottom: 20px; }}
+        table {{ width: 100%; border-collapse: collapse; }}
+        th, td {{ border: 1px solid #ddd; padding: 8px; text-align: left; }}
+        th {{ background-color: #f2f2f2; }}
+    </style>
+</head>
+<body>
+    <div class="warning">WARNING: DO NOT COMMIT THIS FILE. IT MAY CONTAIN SENSITIVE (THOUGH PARTIALLY MASKED) INFORMATION.</div>
+    <h1>VaultScan Report</h1>
+    <p>Total Findings: {len(findings)}</p>
+    <table>
+        <tr>
+            <th>Rule ID</th>
+            <th>Severity</th>
+            <th>Masked Value</th>
+            <th>Occurrences</th>
+        </tr>
+"""
+        for f in findings:
+            occurrences_text = "<br>".join([f"{o['file_path']}:{o['line_number']} ({o['source']})" for o in f["occurrences"]])
+            html_content += f"""
+        <tr>
+            <td>{f['rule_id']}</td>
+            <td>{f['severity']}</td>
+            <td><code>{f['masked_value']}</code></td>
+            <td>{occurrences_text}</td>
+        </tr>
+"""
+        html_content += """
+    </table>
+</body>
+</html>
+"""
+        return HTMLResponse(
+            content=html_content,
+            headers={"Content-Disposition": "attachment; filename=vaultscan_report.html"}
+        )
+    else:
+        raise HTTPException(status_code=400, detail="Invalid format. Use 'json' or 'html'.")

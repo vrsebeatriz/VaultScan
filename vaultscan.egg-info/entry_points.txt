@@ -1,0 +1,2 @@
+[console_scripts]
+vaultscan = vaultscan.cli:main

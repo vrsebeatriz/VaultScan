@@ -110,8 +110,14 @@
                 <div class="col-span-9 space-y-4">
                     
                     <div class="flex justify-between items-center mb-2">
-                        <h2 class="text-lg font-semibold text-white">Scan Findings</h2>
-                        <span id="findingsCount" class="text-sm text-slate-400">0 results</span>
+                        <div class="flex items-center gap-4">
+                            <h2 class="text-lg font-semibold text-white">Scan Findings</h2>
+                            <span id="findingsCount" class="text-sm text-slate-400">0 results</span>
+                        </div>
+                        <div id="exportControls" class="hidden flex gap-2">
+                            <button id="btnExportJson" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded border border-slate-700 transition-colors">Export JSON</button>
+                            <button id="btnExportHtml" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded border border-slate-700 transition-colors">Export HTML</button>
+                        </div>
                     </div>
 
                     <div id="findingsContainer" class="space-y-4">

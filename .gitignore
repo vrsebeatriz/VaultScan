@@ -21,3 +21,6 @@ Thumbs.db
 
 # Node
 node_modules/
+
+# AI Assistant
+CLAUDE.md

@@ -48,6 +48,19 @@ def test_scan_flow(client, temp_repo):
     assert "matched_value" not in finding
     assert finding["masked_value"] == "AKIA****MPLX"
 
+    # 4. Check export JSON
+    json_export = client.get(f"/api/export?scan_id={scan_id}&format=json")
+    assert json_export.status_code == 200
+    assert json_export.headers["Content-Disposition"].startswith("attachment; filename=vaultscan_report.json")
+    assert "AKIA****MPLX" in json_export.text
+    
+    # 5. Check export HTML
+    html_export = client.get(f"/api/export?scan_id={scan_id}&format=html")
+    assert html_export.status_code == 200
+    assert html_export.headers["Content-Disposition"].startswith("attachment; filename=vaultscan_report.html")
+    assert "WARNING: DO NOT COMMIT THIS FILE" in html_export.text
+    assert "AKIA****MPLX" in html_export.text
+
 def test_scan_conflict(client, temp_repo):
     # Manually inject a running scan
     SCANS["fake_id"] = {"status": "running"}
