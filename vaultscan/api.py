@@ -78,6 +78,16 @@ async def start_scan(req: ScanRequest, background_tasks: BackgroundTasks):
     background_tasks.add_task(run_scan_task, scan_id, req.repo_path)
     return {"scan_id": scan_id}
 
+@app.get("/api/scans/latest")
+async def get_latest_scan():
+    if not SCANS:
+        raise HTTPException(status_code=404, detail="No scans found.")
+    
+    # In a dictionary, keys are ordered by insertion time (Python 3.7+)
+    # So the last key is the most recent scan
+    latest_id = list(SCANS.keys())[-1]
+    return {"scan_id": latest_id, "status": SCANS[latest_id]["status"]}
+
 @app.get("/api/status")
 async def get_status(scan_id: str):
     if scan_id not in SCANS:
