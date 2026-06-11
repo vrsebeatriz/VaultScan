@@ -3,67 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VaultScan Dashboard</title>
+    <title>VaultScan | Enterprise Secrets Detection</title>
     <link rel="stylesheet" href="/static/css/output.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Inter', sans-serif; }
-    </style>
 </head>
-<body class="bg-[#0f172a] text-slate-200 min-h-screen selection:bg-indigo-500/30">
+<body class="selection:bg-indigo-500/30 overflow-x-hidden">
 
-    <!-- Header -->
-    <header class="sticky top-0 z-50 glass-panel rounded-none border-t-0 border-x-0 px-6 py-4 flex items-center justify-between">
+    <!-- Header (Hidden initially) -->
+    <header id="mainHeader" class="hidden sticky top-0 z-50 glass-panel rounded-none border-t-0 border-x-0 px-6 py-4 flex items-center justify-between transition-all duration-500">
         <div class="flex items-center gap-3">
-            <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center font-bold text-white shadow-lg shadow-indigo-500/30">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center font-bold text-white shadow-lg shadow-indigo-500/40">
                 VS
             </div>
-            <h1 class="text-xl font-semibold tracking-tight text-white">VaultScan</h1>
+            <h1 class="text-xl font-bold tracking-tight text-white">VaultScan</h1>
         </div>
         
         <div class="flex gap-4 w-full max-w-xl ml-8">
-            <input type="text" id="repoInput" placeholder="Enter absolute repository path..." 
-                class="flex-1 bg-slate-900/50 border border-slate-700 rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all placeholder:text-slate-500">
-            <button id="scanBtn" class="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-2 rounded-lg text-sm font-medium transition-colors shadow-lg shadow-indigo-600/20">
-                Start Scan
+            <input type="text" id="repoInputHeader" placeholder="Scan another repository..." 
+                class="flex-1 bg-slate-900/60 border border-slate-700 rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all placeholder:text-slate-500 shadow-inner font-mono text-slate-300">
+            <button id="scanBtnHeader" class="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-2 rounded-lg text-sm font-medium transition-all hover:shadow-[0_0_15px_rgba(79,70,229,0.5)]">
+                Scan
             </button>
         </div>
     </header>
 
-    <!-- Main Content -->
-    <main class="max-w-7xl mx-auto p-6 space-y-8">
+    <!-- Hero Section (Empty State) -->
+    <div id="heroSection" class="min-h-screen flex flex-col items-center justify-center p-6 relative transition-all duration-700">
+        <!-- Decorative Glows -->
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-indigo-600/20 rounded-full blur-[120px] pointer-events-none"></div>
+        <div class="absolute top-1/2 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-purple-600/20 rounded-full blur-[100px] pointer-events-none"></div>
         
-        <!-- Progress Bar (Hidden by default) -->
-        <div id="progressContainer" class="hidden glass-panel p-6 space-y-3">
-            <div class="flex justify-between items-center text-sm font-medium text-slate-300">
-                <span id="progressStatus">Initializing scan...</span>
-                <span id="progressText">0%</span>
+        <div class="z-10 flex flex-col items-center max-w-2xl w-full text-center space-y-8 animate-fade-in-up">
+            <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center font-bold text-3xl text-white shadow-[0_0_30px_rgba(99,102,241,0.5)] border border-white/10 mb-2">
+                VS
             </div>
-            <div class="w-full bg-slate-900 rounded-full h-2 overflow-hidden border border-slate-800">
-                <div id="progressBar" class="bg-gradient-to-r from-indigo-500 to-purple-500 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+            <h1 class="text-5xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400">
+                Secure Your Repository
+            </h1>
+            <p class="text-lg text-slate-400 font-light">
+                Enterprise-grade local scanning for exposed secrets, high entropy tokens, and IaC misconfigurations. Zero data exfiltration.
+            </p>
+            
+            <div class="w-full glass-panel p-2 rounded-xl flex gap-2 relative group mt-8 transition-transform hover:scale-[1.02]">
+                <input type="text" id="repoInputHero" placeholder="Enter absolute repository path... (e.g., C:\Projects\MyRepo)" 
+                    class="flex-1 bg-transparent border-none px-6 py-4 text-base focus:outline-none placeholder:text-slate-500 text-white font-mono">
+                <button id="scanBtnHero" class="bg-indigo-600 hover:bg-indigo-500 text-white px-8 py-4 rounded-lg font-medium transition-all hover:shadow-[0_0_20px_rgba(79,70,229,0.5)] group-hover:bg-indigo-500">
+                    Analyze Now
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main id="mainLayout" class="hidden max-w-[90rem] mx-auto p-8 space-y-10 mt-4 transition-all duration-700">
+        
+        <!-- Progress Bar -->
+        <div id="progressContainer" class="hidden glass-panel p-8 space-y-4 animate-fade-in-up">
+            <div class="flex justify-between items-center text-sm font-medium text-slate-300">
+                <span id="progressStatus" class="flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></span>
+                    Initializing Deep Scan...
+                </span>
+                <span id="progressText" class="font-mono text-indigo-400">0%</span>
+            </div>
+            <div class="w-full bg-slate-900 rounded-full h-3 overflow-hidden border border-slate-700/50 shadow-inner">
+                <div id="progressBar" class="bg-gradient-to-r from-indigo-500 via-purple-500 to-indigo-500 h-full rounded-full transition-all duration-300 bg-[length:200%_100%] animate-[pulse-slow_2s_linear_infinite]" style="width: 0%"></div>
             </div>
         </div>
 
-        <!-- Dashboard Content (Hidden until scan finishes) -->
-        <div id="dashboardContent" class="hidden space-y-8">
+        <!-- Dashboard Content -->
+        <div id="dashboardContent" class="hidden space-y-10">
             
             <!-- Severity Cards -->
             <div class="grid grid-cols-4 gap-6">
-                <div class="glass-panel p-6 card-critical flex flex-col justify-center items-center">
-                    <span class="text-slate-400 text-sm font-medium uppercase tracking-wider mb-2">Critical</span>
-                    <span id="countCritical" class="text-4xl font-bold text-white">0</span>
+                <div class="glass-panel p-8 card-critical glow-critical flex flex-col justify-center items-center relative overflow-hidden group">
+                    <div class="absolute inset-0 bg-gradient-to-br from-red-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <span class="text-red-400/80 text-sm font-bold uppercase tracking-widest mb-2 z-10">Critical</span>
+                    <span id="countCritical" class="text-5xl font-black text-white z-10 drop-shadow-md">0</span>
                 </div>
-                <div class="glass-panel p-6 card-high flex flex-col justify-center items-center">
-                    <span class="text-slate-400 text-sm font-medium uppercase tracking-wider mb-2">High</span>
-                    <span id="countHigh" class="text-4xl font-bold text-white">0</span>
+                <div class="glass-panel p-8 card-high glow-high flex flex-col justify-center items-center relative overflow-hidden group">
+                    <div class="absolute inset-0 bg-gradient-to-br from-orange-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <span class="text-orange-400/80 text-sm font-bold uppercase tracking-widest mb-2 z-10">High</span>
+                    <span id="countHigh" class="text-5xl font-black text-white z-10 drop-shadow-md">0</span>
                 </div>
-                <div class="glass-panel p-6 card-medium flex flex-col justify-center items-center">
-                    <span class="text-slate-400 text-sm font-medium uppercase tracking-wider mb-2">Medium</span>
-                    <span id="countMedium" class="text-4xl font-bold text-white">0</span>
+                <div class="glass-panel p-8 card-medium glow-medium flex flex-col justify-center items-center relative overflow-hidden group">
+                    <div class="absolute inset-0 bg-gradient-to-br from-yellow-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <span class="text-yellow-400/80 text-sm font-bold uppercase tracking-widest mb-2 z-10">Medium</span>
+                    <span id="countMedium" class="text-5xl font-black text-white z-10 drop-shadow-md">0</span>
                 </div>
-                <div class="glass-panel p-6 card-low flex flex-col justify-center items-center">
-                    <span class="text-slate-400 text-sm font-medium uppercase tracking-wider mb-2">Low</span>
-                    <span id="countLow" class="text-4xl font-bold text-white">0</span>
+                <div class="glass-panel p-8 card-low glow-low flex flex-col justify-center items-center relative overflow-hidden group">
+                    <div class="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <span class="text-blue-400/80 text-sm font-bold uppercase tracking-widest mb-2 z-10">Low</span>
+                    <span id="countLow" class="text-5xl font-black text-white z-10 drop-shadow-md">0</span>
                 </div>
             </div>
 
@@ -72,12 +102,15 @@
                 
                 <!-- Sidebar / Filters -->
                 <div class="col-span-3 space-y-6">
-                    <div class="glass-panel p-5 space-y-4">
-                        <h3 class="text-sm font-semibold uppercase tracking-wider text-slate-400">Filters</h3>
+                    <div class="glass-panel p-6 space-y-5 sticky top-28">
+                        <h3 class="text-sm font-bold uppercase tracking-widest text-slate-400 mb-6 flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
+                            Filters
+                        </h3>
                         
                         <div class="space-y-2">
-                            <label class="text-xs font-medium text-slate-300">Severity</label>
-                            <select id="filterSeverity" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500">
+                            <label class="text-xs font-semibold text-slate-300 uppercase tracking-wider">Severity</label>
+                            <select id="filterSeverity" class="w-full bg-slate-900/80 border border-slate-700/80 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors shadow-inner text-slate-200 cursor-pointer">
                                 <option value="ALL">All Severities</option>
                                 <option value="CRITICAL">Critical</option>
                                 <option value="HIGH">High</option>
@@ -87,8 +120,8 @@
                         </div>
                         
                         <div class="space-y-2">
-                            <label class="text-xs font-medium text-slate-300">Source</label>
-                            <select id="filterSource" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500">
+                            <label class="text-xs font-semibold text-slate-300 uppercase tracking-wider">Source</label>
+                            <select id="filterSource" class="w-full bg-slate-900/80 border border-slate-700/80 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors shadow-inner text-slate-200 cursor-pointer">
                                 <option value="ALL">All Sources</option>
                                 <option value="working_tree">Working Tree</option>
                                 <option value="git_history">Git History</option>
@@ -96,49 +129,58 @@
                         </div>
 
                         <div class="space-y-2">
-                            <label class="text-xs font-medium text-slate-300">File Search</label>
-                            <input type="text" id="filterFile" placeholder="e.g. main.py" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500 placeholder:text-slate-600">
+                            <label class="text-xs font-semibold text-slate-300 uppercase tracking-wider">File Search</label>
+                            <input type="text" id="filterFile" placeholder="e.g. main.py" class="w-full bg-slate-900/80 border border-slate-700/80 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors placeholder:text-slate-600 shadow-inner text-slate-200 font-mono">
                         </div>
                         
-                        <button id="applyFiltersBtn" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                        <button id="applyFiltersBtn" class="w-full mt-4 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-600 px-4 py-3 rounded-lg text-sm font-semibold transition-all shadow-md hover:shadow-lg">
                             Apply Filters
                         </button>
                     </div>
                 </div>
 
                 <!-- Findings List -->
-                <div class="col-span-9 space-y-4">
+                <div class="col-span-9 space-y-6">
                     
-                    <div class="flex justify-between items-center mb-2">
+                    <div class="flex justify-between items-center mb-4 pb-4 border-b border-slate-800/50">
                         <div class="flex items-center gap-4">
-                            <h2 class="text-lg font-semibold text-white">Scan Findings</h2>
-                            <span id="findingsCount" class="text-sm text-slate-400">0 results</span>
+                            <h2 class="text-2xl font-bold text-white tracking-tight">Scan Findings</h2>
+                            <span id="findingsCount" class="bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 px-3 py-1 rounded-full text-xs font-bold">0 results</span>
                         </div>
-                        <div id="exportControls" class="hidden flex gap-2">
-                            <button id="btnExportJson" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded border border-slate-700 transition-colors">Export JSON</button>
-                            <button id="btnExportHtml" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded border border-slate-700 transition-colors">Export HTML</button>
+                        <div id="exportControls" class="hidden flex gap-3">
+                            <button id="btnExportJson" class="text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2 rounded-lg border border-slate-600 transition-all hover:border-slate-500 flex items-center gap-2 hover:text-white">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                                JSON
+                            </button>
+                            <button id="btnExportHtml" class="text-xs font-semibold bg-indigo-600/90 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg border border-indigo-500 transition-all shadow-[0_0_10px_rgba(79,70,229,0.3)] flex items-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                                HTML
+                            </button>
                         </div>
                     </div>
 
-                    <div id="findingsContainer" class="space-y-4">
+                    <div id="findingsContainer" class="space-y-6">
                         <!-- Rendered Findings go here -->
                     </div>
 
                     <!-- Pagination -->
-                    <div class="flex justify-center items-center gap-4 mt-6 pt-4">
-                        <button id="btnPrev" class="px-4 py-2 bg-slate-800 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed border border-slate-700">Previous</button>
-                        <span id="pageIndicator" class="text-sm text-slate-400">Page 1 of 1</span>
-                        <button id="btnNext" class="px-4 py-2 bg-slate-800 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed border border-slate-700">Next</button>
+                    <div class="flex justify-center items-center gap-6 mt-10 pt-6 border-t border-slate-800/50">
+                        <button id="btnPrev" class="px-6 py-2.5 bg-slate-800 rounded-lg text-sm font-semibold text-slate-300 hover:bg-slate-700 disabled:opacity-30 disabled:cursor-not-allowed border border-slate-700 transition-colors">Previous</button>
+                        <span id="pageIndicator" class="text-sm font-medium text-slate-400 bg-slate-900/50 px-4 py-1.5 rounded-full border border-slate-800/80">Page 1 of 1</span>
+                        <button id="btnNext" class="px-6 py-2.5 bg-slate-800 rounded-lg text-sm font-semibold text-slate-300 hover:bg-slate-700 disabled:opacity-30 disabled:cursor-not-allowed border border-slate-700 transition-colors">Next</button>
                     </div>
 
                 </div>
             </div>
             
             <!-- Commit Timeline Section -->
-            <div class="mt-12">
-                <h2 class="text-lg font-semibold text-white mb-6">Git History Timeline (Secret Introduction)</h2>
-                <div class="glass-panel p-6">
-                    <div id="timelineContainer" class="relative border-l border-slate-700 ml-4 space-y-8">
+            <div class="mt-16 pt-8 border-t border-slate-800/50">
+                <h2 class="text-2xl font-bold text-white mb-8 tracking-tight flex items-center gap-3">
+                    <svg class="w-6 h-6 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    Git History Timeline
+                </h2>
+                <div class="glass-panel p-8 rounded-2xl">
+                    <div id="timelineContainer" class="relative border-l-2 border-slate-700/50 ml-4 space-y-10 pb-4">
                         <!-- Timeline entries go here -->
                     </div>
                 </div>

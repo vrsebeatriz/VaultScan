@@ -1,43 +1,86 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Outfit:wght@300;400;500;600;700&display=swap');
 
 @theme {
-    --color-gray-850: #1a1e23;
-    --color-gray-900: #111827;
+  --font-sans: 'Outfit', sans-serif;
+  --font-mono: 'Fira Code', monospace;
+  
+  --animate-fade-in-up: fade-in-up 0.5s ease-out forwards;
+  --animate-pulse-slow: pulse-slow 3s infinite;
+  
+  @keyframes fade-in-up {
+    0% { opacity: 0; transform: translateY(15px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes pulse-slow {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
 }
 
-body {
-    @apply bg-gray-900 text-gray-100 antialiased font-sans;
+@layer utilities {
+  .glass {
+    @apply bg-slate-900/40 backdrop-blur-md border border-slate-700/50 shadow-xl;
+  }
+  .glass-panel {
+    @apply bg-slate-900/70 backdrop-blur-xl border border-slate-700/50 shadow-2xl;
+  }
+  .glow-critical {
+    @apply shadow-[0_0_20px_rgba(220,38,38,0.4)] border-red-500/40;
+  }
+  .glow-high {
+    @apply shadow-[0_0_20px_rgba(234,88,12,0.4)] border-orange-500/40;
+  }
+  .glow-medium {
+    @apply shadow-[0_0_20px_rgba(202,138,4,0.4)] border-yellow-500/40;
+  }
+  .glow-low {
+    @apply shadow-[0_0_20px_rgba(37,99,235,0.4)] border-blue-500/40;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 }
 
-.glass-panel {
-    @apply bg-gray-800/60 backdrop-blur-md border border-gray-700/50 rounded-xl shadow-lg;
+@layer base {
+  body {
+    @apply antialiased font-sans;
+    background: radial-gradient(circle at top, #1e293b, #020617);
+    background-attachment: fixed;
+    color: #f8fafc;
+    min-height: 100vh;
+  }
 }
 
-.card-critical {
-    @apply border-l-4 border-l-red-500 bg-red-950/20 hover:bg-red-950/40 transition-colors;
-}
-
-.card-high {
-    @apply border-l-4 border-l-orange-500 bg-orange-950/20 hover:bg-orange-950/40 transition-colors;
-}
-
-.card-medium {
-    @apply border-l-4 border-l-yellow-500 bg-yellow-950/20 hover:bg-yellow-950/40 transition-colors;
-}
-
-.card-low {
-    @apply border-l-4 border-l-blue-500 bg-blue-950/20 hover:bg-blue-950/40 transition-colors;
-}
-
-.badge-critical {
-    @apply bg-red-500/20 text-red-400 px-2 py-1 rounded-md text-xs font-bold uppercase tracking-wider border border-red-500/30;
-}
-.badge-high {
-    @apply bg-orange-500/20 text-orange-400 px-2 py-1 rounded-md text-xs font-bold uppercase tracking-wider border border-orange-500/30;
-}
-.badge-medium {
-    @apply bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded-md text-xs font-bold uppercase tracking-wider border border-yellow-500/30;
-}
-.badge-low {
-    @apply bg-blue-500/20 text-blue-400 px-2 py-1 rounded-md text-xs font-bold uppercase tracking-wider border border-blue-500/30;
+@layer components {
+  .card-critical {
+      @apply border-l-4 border-l-red-500 bg-slate-800/40 hover:bg-slate-800/80 transition-all hover:-translate-y-1 hover:shadow-lg;
+  }
+  .card-high {
+      @apply border-l-4 border-l-orange-500 bg-slate-800/40 hover:bg-slate-800/80 transition-all hover:-translate-y-1 hover:shadow-lg;
+  }
+  .card-medium {
+      @apply border-l-4 border-l-yellow-500 bg-slate-800/40 hover:bg-slate-800/80 transition-all hover:-translate-y-1 hover:shadow-lg;
+  }
+  .card-low {
+      @apply border-l-4 border-l-blue-500 bg-slate-800/40 hover:bg-slate-800/80 transition-all hover:-translate-y-1 hover:shadow-lg;
+  }
+  
+  .badge-critical {
+      @apply bg-red-500/20 text-red-400 px-2 py-1 rounded-md text-xs font-bold uppercase tracking-wider border border-red-500/30;
+  }
+  .badge-high {
+      @apply bg-orange-500/20 text-orange-400 px-2 py-1 rounded-md text-xs font-bold uppercase tracking-wider border border-orange-500/30;
+  }
+  .badge-medium {
+      @apply bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded-md text-xs font-bold uppercase tracking-wider border border-yellow-500/30;
+  }
+  .badge-low {
+      @apply bg-blue-500/20 text-blue-400 px-2 py-1 rounded-md text-xs font-bold uppercase tracking-wider border border-blue-500/30;
+  }
 }
