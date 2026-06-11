@@ -29,7 +29,7 @@ def run_headless_scan(repo_path: str) -> int:
     git_scanner = GitHistoryScanner(orchestrator, repo_path)
     git_scanner.scan()
     
-    findings = list(orchestrator.findings_map.values())
+    findings = orchestrator.finalize()
     
     print(f"\nScan complete. Found {len(findings)} unique secret/IaC issues.")
     for f in findings:

@@ -47,7 +47,7 @@ def run_scan_task(scan_id: str, repo_path: str):
         git_scanner = GitHistoryScanner(orchestrator, repo_path)
         git_scanner.scan()
         
-        findings = list(orchestrator.findings_map.values())
+        findings = orchestrator.finalize()
         
         SCANS[scan_id]["status"] = "complete"
         # model_dump is used here so FastAPI serializes it cleanly.

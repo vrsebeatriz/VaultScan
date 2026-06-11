@@ -82,9 +82,6 @@ class ScanOrchestrator:
             )
             if not is_duplicate:
                 finding.occurrences.append(occ)
-            
-            if base_severity == Severity.CRITICAL:
-                finding.severity = Severity.CRITICAL
 
     def scan_content(self, text: str, file_path: str, source: str, is_tracked: bool,
                      commit_sha: str = None, commit_date: str = None, commit_message: str = None):
@@ -122,7 +119,7 @@ class ScanOrchestrator:
         is_tracked = self._is_tracked(file_path)
         self.scan_content(content, file_path, "working_tree", is_tracked)
 
-    def scan_directory(self, target_dir: str) -> List[Finding]:
+    def scan_directory(self, target_dir: str):
         files_to_scan = []
         for root, dirs, files in os.walk(target_dir):
             for file in files:
@@ -136,8 +133,8 @@ class ScanOrchestrator:
             if self.progress_callback and total > 0:
                 self.progress_callback(int((i + 1) / total * 50))
 
+    def finalize(self) -> List[Finding]:
         final_findings = list(self.findings_map.values())
         for finding in final_findings:
             compute_severity(finding)
-
         return final_findings
