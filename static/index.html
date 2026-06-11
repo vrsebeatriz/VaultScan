@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VaultScan Dashboard</title>
+    <link rel="stylesheet" href="/static/css/output.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-[#0f172a] text-slate-200 min-h-screen selection:bg-indigo-500/30">
+
+    <!-- Header -->
+    <header class="sticky top-0 z-50 glass-panel rounded-none border-t-0 border-x-0 px-6 py-4 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center font-bold text-white shadow-lg shadow-indigo-500/30">
+                VS
+            </div>
+            <h1 class="text-xl font-semibold tracking-tight text-white">VaultScan</h1>
+        </div>
+        
+        <div class="flex gap-4 w-full max-w-xl ml-8">
+            <input type="text" id="repoInput" placeholder="Enter absolute repository path..." 
+                class="flex-1 bg-slate-900/50 border border-slate-700 rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all placeholder:text-slate-500">
+            <button id="scanBtn" class="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-2 rounded-lg text-sm font-medium transition-colors shadow-lg shadow-indigo-600/20">
+                Start Scan
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto p-6 space-y-8">
+        
+        <!-- Progress Bar (Hidden by default) -->
+        <div id="progressContainer" class="hidden glass-panel p-6 space-y-3">
+            <div class="flex justify-between items-center text-sm font-medium text-slate-300">
+                <span id="progressStatus">Initializing scan...</span>
+                <span id="progressText">0%</span>
+            </div>
+            <div class="w-full bg-slate-900 rounded-full h-2 overflow-hidden border border-slate-800">
+                <div id="progressBar" class="bg-gradient-to-r from-indigo-500 to-purple-500 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+            </div>
+        </div>
+
+        <!-- Dashboard Content (Hidden until scan finishes) -->
+        <div id="dashboardContent" class="hidden space-y-8">
+            
+            <!-- Severity Cards -->
+            <div class="grid grid-cols-4 gap-6">
+                <div class="glass-panel p-6 card-critical flex flex-col justify-center items-center">
+                    <span class="text-slate-400 text-sm font-medium uppercase tracking-wider mb-2">Critical</span>
+                    <span id="countCritical" class="text-4xl font-bold text-white">0</span>
+                </div>
+                <div class="glass-panel p-6 card-high flex flex-col justify-center items-center">
+                    <span class="text-slate-400 text-sm font-medium uppercase tracking-wider mb-2">High</span>
+                    <span id="countHigh" class="text-4xl font-bold text-white">0</span>
+                </div>
+                <div class="glass-panel p-6 card-medium flex flex-col justify-center items-center">
+                    <span class="text-slate-400 text-sm font-medium uppercase tracking-wider mb-2">Medium</span>
+                    <span id="countMedium" class="text-4xl font-bold text-white">0</span>
+                </div>
+                <div class="glass-panel p-6 card-low flex flex-col justify-center items-center">
+                    <span class="text-slate-400 text-sm font-medium uppercase tracking-wider mb-2">Low</span>
+                    <span id="countLow" class="text-4xl font-bold text-white">0</span>
+                </div>
+            </div>
+
+            <!-- Main Layout (Filters + Findings) -->
+            <div class="grid grid-cols-12 gap-8">
+                
+                <!-- Sidebar / Filters -->
+                <div class="col-span-3 space-y-6">
+                    <div class="glass-panel p-5 space-y-4">
+                        <h3 class="text-sm font-semibold uppercase tracking-wider text-slate-400">Filters</h3>
+                        
+                        <div class="space-y-2">
+                            <label class="text-xs font-medium text-slate-300">Severity</label>
+                            <select id="filterSeverity" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500">
+                                <option value="ALL">All Severities</option>
+                                <option value="CRITICAL">Critical</option>
+                                <option value="HIGH">High</option>
+                                <option value="MEDIUM">Medium</option>
+                                <option value="LOW">Low</option>
+                            </select>
+                        </div>
+                        
+                        <div class="space-y-2">
+                            <label class="text-xs font-medium text-slate-300">Source</label>
+                            <select id="filterSource" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500">
+                                <option value="ALL">All Sources</option>
+                                <option value="working_tree">Working Tree</option>
+                                <option value="git_history">Git History</option>
+                            </select>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="text-xs font-medium text-slate-300">File Search</label>
+                            <input type="text" id="filterFile" placeholder="e.g. main.py" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500 placeholder:text-slate-600">
+                        </div>
+                        
+                        <button id="applyFiltersBtn" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                            Apply Filters
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Findings List -->
+                <div class="col-span-9 space-y-4">
+                    
+                    <div class="flex justify-between items-center mb-2">
+                        <h2 class="text-lg font-semibold text-white">Scan Findings</h2>
+                        <span id="findingsCount" class="text-sm text-slate-400">0 results</span>
+                    </div>
+
+                    <div id="findingsContainer" class="space-y-4">
+                        <!-- Rendered Findings go here -->
+                    </div>
+
+                    <!-- Pagination -->
+                    <div class="flex justify-center items-center gap-4 mt-6 pt-4">
+                        <button id="btnPrev" class="px-4 py-2 bg-slate-800 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed border border-slate-700">Previous</button>
+                        <span id="pageIndicator" class="text-sm text-slate-400">Page 1 of 1</span>
+                        <button id="btnNext" class="px-4 py-2 bg-slate-800 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed border border-slate-700">Next</button>
+                    </div>
+
+                </div>
+            </div>
+            
+            <!-- Commit Timeline Section -->
+            <div class="mt-12">
+                <h2 class="text-lg font-semibold text-white mb-6">Git History Timeline (Secret Introduction)</h2>
+                <div class="glass-panel p-6">
+                    <div id="timelineContainer" class="relative border-l border-slate-700 ml-4 space-y-8">
+                        <!-- Timeline entries go here -->
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>

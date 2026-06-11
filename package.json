@@ -1,0 +1,13 @@
+{
+  "name": "vaultscan-ui",
+  "version": "1.0.0",
+  "description": "UI for VaultScan",
+  "scripts": {
+    "build:css": "npx @tailwindcss/cli -i src/input.css -o static/css/output.css",
+    "dev:css": "npx @tailwindcss/cli -i src/input.css -o static/css/output.css --watch"
+  },
+  "dependencies": {
+    "tailwindcss": "^4.0.0",
+    "@tailwindcss/cli": "^4.0.0"
+  }
+}

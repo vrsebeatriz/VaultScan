@@ -1,6 +1,8 @@
 import uuid
 import os
 from fastapi import FastAPI, HTTPException, BackgroundTasks, status
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from typing import Dict, Any
 
@@ -9,6 +11,18 @@ from .scanner import ScanOrchestrator
 from .git_scanner import GitHistoryScanner
 
 app = FastAPI(title="VaultScan API")
+
+# Ensure static directory exists relative to the project root
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+STATIC_DIR = os.path.join(BASE_DIR, "static")
+if not os.path.exists(STATIC_DIR):
+    os.makedirs(STATIC_DIR)
+
+app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+
+@app.get("/")
+async def serve_index():
+    return FileResponse(os.path.join(STATIC_DIR, "index.html"))
 
 # Global state for a single-user tool
 # Keeps track of all scans. However, we only allow 1 scan to run at a time globally.

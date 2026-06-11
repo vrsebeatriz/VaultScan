@@ -1,0 +1,43 @@
+@import "tailwindcss";
+
+@theme {
+    --color-gray-850: #1a1e23;
+    --color-gray-900: #111827;
+}
+
+body {
+    @apply bg-gray-900 text-gray-100 antialiased font-sans;
+}
+
+.glass-panel {
+    @apply bg-gray-800/60 backdrop-blur-md border border-gray-700/50 rounded-xl shadow-lg;
+}
+
+.card-critical {
+    @apply border-l-4 border-l-red-500 bg-red-950/20 hover:bg-red-950/40 transition-colors;
+}
+
+.card-high {
+    @apply border-l-4 border-l-orange-500 bg-orange-950/20 hover:bg-orange-950/40 transition-colors;
+}
+
+.card-medium {
+    @apply border-l-4 border-l-yellow-500 bg-yellow-950/20 hover:bg-yellow-950/40 transition-colors;
+}
+
+.card-low {
+    @apply border-l-4 border-l-blue-500 bg-blue-950/20 hover:bg-blue-950/40 transition-colors;
+}
+
+.badge-critical {
+    @apply bg-red-500/20 text-red-400 px-2 py-1 rounded-md text-xs font-bold uppercase tracking-wider border border-red-500/30;
+}
+.badge-high {
+    @apply bg-orange-500/20 text-orange-400 px-2 py-1 rounded-md text-xs font-bold uppercase tracking-wider border border-orange-500/30;
+}
+.badge-medium {
+    @apply bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded-md text-xs font-bold uppercase tracking-wider border border-yellow-500/30;
+}
+.badge-low {
+    @apply bg-blue-500/20 text-blue-400 px-2 py-1 rounded-md text-xs font-bold uppercase tracking-wider border border-blue-500/30;
+}
