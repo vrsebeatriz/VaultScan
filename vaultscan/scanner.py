@@ -38,7 +38,10 @@ class ScanOrchestrator:
             file_path=raw["file_path"],
             line_number=raw["line_number"],
             snippet=raw["snippet"],
-            source=raw["source"]
+            source=raw["source"],
+            commit_sha=raw.get("commit_sha"),
+            commit_date=raw.get("commit_date"),
+            commit_message=raw.get("commit_message")
         )
 
         if matched_value not in self.findings_map:
@@ -49,10 +52,18 @@ class ScanOrchestrator:
                 occurrences=[occ]
             )
         else:
-            self.findings_map[matched_value].occurrences.append(occ)
+            finding = self.findings_map[matched_value]
+            # Deduplicate occurrence
+            is_duplicate = any(
+                o.file_path == occ.file_path and o.line_number == occ.line_number 
+                for o in finding.occurrences
+            )
+            if not is_duplicate:
+                finding.occurrences.append(occ)
+            
             # Potentially update base severity if a stronger rule matched
             if base_severity == Severity.CRITICAL:
-                self.findings_map[matched_value].severity = Severity.CRITICAL
+                finding.severity = Severity.CRITICAL
 
     def scan_file(self, file_path: str):
         if not self.filter_chain.should_scan_file(file_path):

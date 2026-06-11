@@ -7,13 +7,18 @@ class Severity(str, Enum):
     MEDIUM = "MEDIUM"
     LOW = "LOW"
 
-from typing import List
+from typing import List, Optional
 
 class Occurrence(BaseModel):
     file_path: str
     line_number: int
     snippet: str = ""
     source: str = "working_tree"
+    
+    # Optional commit metadata for git_history source
+    commit_sha: Optional[str] = None
+    commit_date: Optional[str] = None
+    commit_message: Optional[str] = None
 
 class Finding(BaseModel):
     rule_id: str
